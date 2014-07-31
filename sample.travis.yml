@@ -1,0 +1,16 @@
+language: python
+
+python:
+    - "2.7"
+
+install:
+    - "pip install nose"
+    - "pip install https://bitbucket.org/nmb10/py_w3c/downloads/py_w3c-v0.1.1.tar.gz"
+
+script:
+    - nosetests
+
+notifications:
+    on_failure: always
+
+sudo: false
