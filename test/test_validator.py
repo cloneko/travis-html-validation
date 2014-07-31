@@ -1,10 +1,17 @@
 import nose
 import json
 import sys
-import glob
+import os
+import re
 from py_w3c.validators.html.validator import HTMLValidator
 
-files = glob.glob('*.html')
+files = []
+
+for root, dirs, file in os.walk('.'):
+	for name in file:
+		if re.search('.*\.html?$',name):
+			files.append(os.path.join(root,name))
+	
 
 def test_has_no_error():
 	count = 0
@@ -16,7 +23,7 @@ def test_has_no_error():
 			errorcount = 0
 			for error in  validator.errors:
 				errorcount += 1
-				print '    ' + str(errorcount) +'. line ' + error['line'] + ': ' + error['message']
+				print '    ' + str(errorcount) +'. line ' + error['line'] + ': ' + error['message'].rstrip('\n')
 		count += len(validator.errors)
 
 	assert count == 0
