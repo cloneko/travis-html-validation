@@ -36,7 +36,7 @@ def test_has_no_error():
 def test_has_no_warnings():
 	count = 0
 	for path,result in results.items():
-		print '* ' + path + ': ' + str(len(result['warnings'])) + ' errors'
+		print '* ' + path + ': ' + str(len(result['warnings'])) + ' warnings'
 		if len(result['warnings']) > 0:
 			errorcount = 0
 			for error in  result['warnings']:
