@@ -1,9 +1,6 @@
 import nose
-import json
-import sys
 import os
 import re
-import copy
 from py_w3c.validators.html.validator import HTMLValidator
 
 files = []
