@@ -17,28 +17,22 @@ for root, dirs, file in os.walk('.'):
 			results[filepath]['warnings'] =  validator.warnings
 
 
-def test_has_no_error():
+
+def validation(key):
 	count = 0
 	for path,result in results.items():
-		print '* ' + path + ': ' + str(len(result['errors'])) + ' errors'
-		if len(result['errors']) > 0:
+		print '* ' + path + ': ' + str(len(result[key])) + ' ' + key
+		if len(result[key]) > 0:
 			errorcount = 0
-			for error in  result['errors']:
+			for error in  result[key]:
 				errorcount += 1
 				print '    ' + str(errorcount) +'. line ' + error['line'] + ': ' + error['message'].rstrip('\n')
-		count += len(result['errors'])
+		count += len(result[key])
 
-	assert count == 0
+	return count
+
+def test_has_no_errors():
+	assert validation('errors') == 0
 
 def test_has_no_warnings():
-	count = 0
-	for path,result in results.items():
-		print '* ' + path + ': ' + str(len(result['warnings'])) + ' warnings'
-		if len(result['warnings']) > 0:
-			errorcount = 0
-			for error in  result['warnings']:
-				errorcount += 1
-				print '    ' + str(errorcount) +'. line ' + error['line'] + ': ' + error['message'].rstrip('\n')
-		count += len(result['warnings'])
-
-	assert count == 0
+	assert validation('warnings') == 0
