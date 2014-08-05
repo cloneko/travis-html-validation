@@ -3,42 +3,45 @@ import json
 import sys
 import os
 import re
+import copy
 from py_w3c.validators.html.validator import HTMLValidator
 
 files = []
+results = {}
 
 for root, dirs, file in os.walk('.'):
 	for name in file:
 		if re.search('.*\.html?$',name):
-			files.append(os.path.join(root,name))
-	
+			validator = HTMLValidator()
+			filepath = os.path.join(root,name)
+			validator.validate_file(filepath)
+			results[filepath] = {}
+			results[filepath]['errors'] = validator.errors
+			results[filepath]['warnings'] =  validator.warnings
+
 
 def test_has_no_error():
 	count = 0
-	validator = HTMLValidator()
-	for target in files:
-		validator.validate_file(target) 
-		print '* ' + target + ': ' + str(len(validator.errors)) + ' errors'
-		if len(validator.errors) > 0:
+	for path,result in results.items():
+		print '* ' + path + ': ' + str(len(result['errors'])) + ' errors'
+		if len(result['errors']) > 0:
 			errorcount = 0
-			for error in  validator.errors:
+			for error in  result['errors']:
 				errorcount += 1
 				print '    ' + str(errorcount) +'. line ' + error['line'] + ': ' + error['message'].rstrip('\n')
-		count += len(validator.errors)
+		count += len(result['errors'])
 
 	assert count == 0
 
 def test_has_no_warnings():
 	count = 0
-	validator = HTMLValidator()
-	for target in files:
-		validator.validate_file(target) 
-		print '* ' + target + ': ' + str(len(validator.warnings)) + ' warnings'
-		if len(validator.warnings) > 0:
+	for path,result in results.items():
+		print '* ' + path + ': ' + str(len(result['warnings'])) + ' errors'
+		if len(result['warnings']) > 0:
 			errorcount = 0
-			for error in  validator.warnings:
+			for error in  result['warnings']:
 				errorcount += 1
-				print '    ' + str(errorcount) +'. line ' + error['line'] + ': ' + error['message']
-		count += len(validator.warnings)
+				print '    ' + str(errorcount) +'. line ' + error['line'] + ': ' + error['message'].rstrip('\n')
+		count += len(result['warnings'])
 
 	assert count == 0
