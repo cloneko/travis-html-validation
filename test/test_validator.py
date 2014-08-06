@@ -1,6 +1,7 @@
 import nose
 import os
 import re
+import copy
 from py_w3c.validators.html.validator import HTMLValidator
 
 files = []
@@ -12,22 +13,32 @@ for root, dirs, file in os.walk('.'):
 			validator = HTMLValidator()
 			filepath = os.path.join(root,name)
 			validator.validate_file(filepath)
-			results[filepath] = {}
-			results[filepath]['errors'] = validator.errors
-			results[filepath]['warnings'] =  validator.warnings
+			results[filepath] = copy.copy(validator)
 
 
 
-def validation(key):
+def validation(errortype):
+	if errortype not in ('errors','warnings'):
+		raise NotImplementedError(errortype + ' is not implemented at Validator Object')
+
 	count = 0
 	for path,result in results.items():
-		print '* ' + path + ': ' + str(len(result[key])) + ' ' + key
-		if len(result[key]) > 0:
+
+		obj = None
+		if errortype == 'errors':
+			obj = result.errors
+		elif errortype == 'warnings':
+			obj = result.warnings
+		else:
+			raise ValueError(errortype + 'is invalid value') 
+
+		print '* ' + path + ': ' + str(len(obj)) + ' ' + errortype
+		if len(obj) > 0:
 			errorcount = 0
-			for error in  result[key]:
+			for error in obj:
 				errorcount += 1
 				print '    ' + str(errorcount) +'. line ' + error['line'] + ': ' + error['message'].rstrip('\n')
-		count += len(result[key])
+		count += len(obj)
 
 	return count
 
