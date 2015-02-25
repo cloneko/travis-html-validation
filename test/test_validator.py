@@ -10,7 +10,7 @@ results = {}
 for root, dirs, file in os.walk('.'):
 	for name in file:
 		if re.search('.*\.html?$',name):
-			validator = HTMLValidator()
+			validator = HTMLValidator(charset="utf8")
 			filepath = os.path.join(root,name)
 			validator.validate_file(filepath)
 			results[filepath] = copy.copy(validator)
